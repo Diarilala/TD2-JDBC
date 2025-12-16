@@ -14,6 +14,6 @@ public class Ingredient {
     private Dish dish;
 
     public String getDishName() {
-        return dish.getName();
+        throw new RuntimeException("Not implemented");
     }
 }
