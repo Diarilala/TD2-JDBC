@@ -16,11 +16,16 @@ public class Dish {
     private List<Ingredient> ingredients;
 
     public Double getDishPrice() {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     @Override
     public String toString() {
-
+        return "Dish{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dishType=" + dishType +
+                ", ingredients=" + ingredients +
+                '}';
     }
 }

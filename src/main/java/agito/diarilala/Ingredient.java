@@ -10,10 +10,21 @@ public class Ingredient {
     private int id;
     private String name;
     private double price;
-    private Category category;
+    private CategoryEnum category;
     private Dish dish;
 
     public String getDishName() {
-        throw new RuntimeException("Not implemented");
+        return dish.getName();
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", category=" + category +
+                ", dish=" + getDishName() +
+                '}';
     }
 }
