@@ -1,10 +1,18 @@
 package agito.diarilala;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+@Setter
+@Getter
+@EqualsAndHashCode
+@AllArgsConstructor
 
 public class DBConnection {
     public Connection getDBConnection() throws SQLException{
@@ -20,6 +28,15 @@ public class DBConnection {
         }
         catch (SQLException e){
             throw new RuntimeException("Database connection failed");
+        }
+    }
+    public void attemptCloseConnection(Connection connection){
+        try{
+            if(connection != null){
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database connection failed to close");
         }
     }
 }
