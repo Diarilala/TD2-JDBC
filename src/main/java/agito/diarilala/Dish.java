@@ -15,8 +15,12 @@ public class Dish {
     private DishTypeEnum dishType;
     private List<Ingredient> ingredients;
 
-    public Double getDishPrice() {
-        throw new RuntimeException("Not Implemented");
+    public Double getDishCost() {
+        double dishCost = 0.0;
+        for (Ingredient ingredient : ingredients) {
+            dishCost += ingredient.getPrice();
+        }
+        return dishCost;
     }
 
     @Override

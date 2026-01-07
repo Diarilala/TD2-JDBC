@@ -19,7 +19,7 @@ public class DataRetriever {
     private final DBConnection dbConnection;
 
     Optional<Dish> findDishById(int id) {
-        String query = "SELECT d.id AS dish_id, d.name AS dish_name, d.dish_type,i.id AS ingredient_id, i.name AS ingredient_name, " +
+        String query = "SELECT d.id AS dish_id, d.name AS dish_name, d.dish_type,i.id AS ingredient_id, i.name AS ingredient_name, i.required_quantity AS quantity" +
                 "i.price, i.category FROM Dish d LEFT JOIN " +
                 "Ingredient i ON d.id = i.id_dish WHERE d.id = ? ORDER BY i.id ASC;";
 
@@ -50,6 +50,7 @@ public class DataRetriever {
                     ingredient.setName(ingredient_name);
                     ingredient.setPrice(resultSet.getDouble("price"));
                     String category = resultSet.getString("category");
+                    ingredient.setQuantity(resultSet.getDouble("quantity"));
                     if(category != null){
                         ingredient.setCategory(CategoryEnum.valueOf(category));
                     }
@@ -90,7 +91,36 @@ public class DataRetriever {
     };
 
     List<Ingredient> createIngredients(List<Ingredient> newIngredients) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Ingredient> createdIngredients = new ArrayList<>();
+        String insertSql = "INSERT INTO Ingredient(name,price,category) VALUES (?,?,?);";
+        try {
+            Connection connection = dbConnection.getDBConnection();
+            connection.setAutoCommit(false);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSql,
+                    Statement.RETURN_GENERATED_KEYS)) {
+                for (Ingredient ingredient : newIngredients) {
+                    preparedStatement.setString(1, ingredient.getName());
+                    preparedStatement.setDouble(2, ingredient.getPrice());
+                    preparedStatement.setString(3, ingredient.getCategory() == null ? null : ingredient.getCategory().name());
+                    preparedStatement.addBatch();
+                }
+                preparedStatement.executeBatch();
+                try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    int i = 0;
+                    while (generatedKeys.next()) {
+                        newIngredients.get(i++).setId(generatedKeys.getInt(1));
+                    }
+                }
+                connection.commit();
+                return newIngredients;
+            }
+            catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     };
 
     Dish saveDish(Dish dishToSave){

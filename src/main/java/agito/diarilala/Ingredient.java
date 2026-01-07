@@ -16,6 +16,7 @@ public class Ingredient {
     private double price;
     private CategoryEnum category;
     private Dish dish;
+    private double quantity;
 
     public String getDishName() {
         return dish.getName();
